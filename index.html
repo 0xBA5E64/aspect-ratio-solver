@@ -92,8 +92,8 @@ const visualizeAccuracyRanking = (ranked_list, table_element, ratio_count = 16, 
   </script>
 </head>
 <body>
-  <input type="text" id="src-x" value="400">
-  <input type="text" id="src-y" value="300">
+  <input type="number" id="src-x" placeholder="Image Width (X)">
+  <input type="number" id="src-y" placeholder="Image Height (Y)">
   <button id="finger">Calc!</button>
   <script>
 
@@ -104,6 +104,17 @@ document.querySelector("#finger").addEventListener('click', () => {
   const best_ratios = createAccuracyRanking(32)
   visualizeAccuracyRanking(best_ratios, ratio_grid, 16)
 })
+
+document.querySelector("#src-x").addEventListener('change', () => {
+  const best_ratios = createAccuracyRanking(32)
+  visualizeAccuracyRanking(best_ratios, ratio_grid, 16)
+})
+
+document.querySelector("#src-y").addEventListener('change', () => {
+  const best_ratios = createAccuracyRanking(32)
+  visualizeAccuracyRanking(best_ratios, ratio_grid, 16)
+})
+
 
   </script>
 </body>
