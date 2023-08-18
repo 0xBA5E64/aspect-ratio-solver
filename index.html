@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aspect Ratio Solver - By Dovah Akesi Zuulkin</title>
+  <style>
+
+.ratio {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: #00F2;
+  margin: 1px;
+  text-align: center;
+  overflow: hidden;
+  font-size: 8px;
+}
+
+  </style>
+  <script>
+
+const genRatios = (max_size) => {
+  const ratio_list = []
+
+  for(let y = 1; y<=max_size; y++) {
+    const ratio_y_list = []
+    for(let x = 1; x<=max_size; x++) {
+      const ratio_x = 0
+      ratio_y_list.push(ratio_x)
+    }
+    ratio_list.push(ratio_y_list);
+  }
+  return ratio_list;
+}
+
+const genRatioGrid = (ratio_list) => {
+  const rg_root_element = document.createElement('table')
+
+  for(let y = 1; y<=ratio_list.length; y++) {
+    const rg_row_element = document.createElement('tr');
+    for(let x = 1; x<=ratio_list[y-1].length; x++) {
+      const rg_ratio_element = document.createElement('td');
+      rg_ratio_element.innerText = `${x}:${y}`
+      rg_ratio_element.classList.add('ratio');
+      rg_row_element.appendChild(rg_ratio_element);
+    }
+    rg_root_element.appendChild(rg_row_element);
+  }
+  return rg_root_element;
+}
+
+const calcErrors = (ratio_list) => {
+  const x_in = parseInt(document.querySelector("#src-x").value)
+  const y_in = parseInt(document.querySelector("#src-y").value)
+
+  const ratio_inraw = x_in / y_in
+  if (ratio_inraw === NaN ) { return ratio_list }
+
+  for(let y = 1; y<=ratio_list.length; y++) {
+    for(let x = 1; x<=ratio_list[y-1].length; x++) {
+      const ratio_diff = ratio_inraw - ( x / y ) 
+      ratio_list[y-1][x-1] = ratio_diff
+    }
+  }
+  //console.log(ratio_list)
+  return ratio_list
+}
+
+const visualizeRatioAcc = (ratio_list, table_element) => {
+  const most_accurate_id = {x:0,y:0}
+  for(let y = 0; y<ratio_list.length; y++) {
+    for(let x = 0; x<ratio_list[y].length; x++) {
+      const ratio_element = table_element.querySelectorAll('tr')[y].querySelectorAll('td')[x];
+      console.log( Math.abs(ratio_list[most_accurate_id.y][most_accurate_id.x]) )
+      if ( Math.abs(ratio_list[most_accurate_id.y][most_accurate_id.x]) < Math.abs(ratio_list[y][x]) )  {
+        ratio_element.style.background = "#0F0";
+        most_accurate_id.x = x
+        most_accurate_id.y = y
+      } else {
+        ratio_element.style.background = "#F00";
+      }
+    }
+  }
+}
+
+const createAccuracyRanking = (ratio_list) => {
+  const ranked_list = []
+  let i = 0
+  for(let y = 0; y<ratio_list.length; y++) {
+    for(let x = 0; x<ratio_list[y].length; x++) {
+      ranked_list.push({
+        i: i++,
+        x: x+1,
+        y: y+1,
+        error: Math.abs(ratio_list[y][x])
+      })
+    }
+  }
+  ranked_list.sort((a, b) => { return a.error - b.error })
+  console.log(ranked_list)
+  return ranked_list;
+}
+
+const visualizeAccuracyRanking = (ranked_list, table_element, ratio_count = 16, filter_repitition = true) => {
+
+  table_element.querySelectorAll('.ratio').forEach((ratio_element) => {ratio_element.style.background = 'white'})
+
+  for(let i = 0; i<ratio_count; i++) {
+    if(filter_repitition && i>=1) {
+      if (ranked_list[i].error == ranked_list[i-1].error) {
+        console.log(`Skipping iteration: ${i}`)
+        continue
+      }
+    }
+    console.log(`Doing iteration: ${i}`)
+    const ratio_element = table_element.querySelectorAll('tr')[ranked_list[i].y-1].querySelectorAll('td')[ranked_list[i].x-1];
+    console.log(table_element.querySelectorAll('tr')[ranked_list[i].y-1].querySelectorAll('td')[ranked_list[i].x-1])
+    console.log(ratio_element)
+    ratio_element.style.background = `rgb(${((i/ratio_count))*255}, ${(1-(i/ratio_count))*255}, 0)`;
+    // 1-(i/ratio_count) 1 -> 0
+  }
+}
+
+  </script>
+</head>
+<body>
+  <input type="text" id="src-x" value="400">
+  <input type="text" id="src-y" value="300">
+  <button id="finger">Calc!</button>
+  <script>
+
+const ratios = genRatios(32)
+const ratio_grid = genRatioGrid(ratios);
+document.body.appendChild(ratio_grid)
+document.querySelector("#finger").addEventListener('click', () => {
+  const best_ratios = createAccuracyRanking(calcErrors(ratios))
+  visualizeAccuracyRanking(best_ratios, ratio_grid, 16, false)
+})
+
+  </script>
+</body>
+</html>
