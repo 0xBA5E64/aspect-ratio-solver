@@ -95,6 +95,7 @@ const visualizeAccuracyRanking = (ranked_list, table_element, ratio_count = 16, 
   <input type="number" min="1" id="src-x" placeholder="Image Width (X)">
   <input type="number" min="1" id="src-y" placeholder="Image Height (Y)">
   <button id="finger">Calc!</button>
+  <p id="alert"></p>
   <script>
 
 const ratio_grid = genRatioGrid(32);
@@ -102,6 +103,11 @@ document.body.appendChild(ratio_grid)
 
 const updateRatioView = () => {
   const best_ratios = createAccuracyRanking(32)
+  if (best_ratios[0].error == 0) {
+    document.querySelector("#alert").innerText = `Got an exact match for ${best_ratios[0].x}:${best_ratios[0].y}`
+  } else {
+    document.querySelector("#alert").innerText = `Got a ${((1-best_ratios[0].error)*100)}% match for ${best_ratios[0].x}:${best_ratios[0].y}`
+  }
   visualizeAccuracyRanking(best_ratios, ratio_grid, 16)
 }
 
