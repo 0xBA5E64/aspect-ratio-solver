@@ -133,6 +133,15 @@ const updateRatioView = () => {
     output.push(`Got an exact match for ${best_ratios[0].x}:${best_ratios[0].y}`)
   } else {
     output.push(`Got a ${((1-best_ratios[0].error)*100)}% match for ${best_ratios[0].x}:${best_ratios[0].y}`)
+    
+    // Check if an exact resolution can be suggested at the closest aspect ratio.
+    // If so, add it to output.
+    const x_in = parseInt(document.querySelector("#src-x").value)
+    const y_in = parseInt(document.querySelector("#src-y").value)
+    const corrected_x = parseFloat( ( y_in / best_ratios[0].y ) * best_ratios[0].x )
+    const corrected_y = parseFloat( ( x_in / best_ratios[0].x ) * best_ratios[0].y )
+    if (corrected_x % 1 == 0) { output.push(`An exact match at this resolution would be <i>${corrected_x}</i> x ${y_in}`) }
+    if (corrected_y % 1 == 0) { output.push(`An exact match at this resolution would be ${x_in} x <i>${corrected_y}</i>`) }
   }
   document.querySelector("#alert").innerHTML = output.join('<br>')
 }
