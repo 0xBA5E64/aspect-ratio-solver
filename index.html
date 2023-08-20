@@ -124,12 +124,17 @@ document.body.appendChild(ratio_grid)
 
 const updateRatioView = () => {
   const best_ratios = createAccuracyRanking(32)
-  if (best_ratios[0].error == 0) {
-    document.querySelector("#alert").innerText = `Got an exact match for ${best_ratios[0].x}:${best_ratios[0].y}`
-  } else {
-    document.querySelector("#alert").innerText = `Got a ${((1-best_ratios[0].error)*100)}% match for ${best_ratios[0].x}:${best_ratios[0].y}`
-  }
+  // Visual Output
   visualizeAccuracyRanking(best_ratios, ratio_grid, 16)
+
+  // Text output
+  let output = [];
+  if (best_ratios[0].error == 0) {
+    output.push(`Got an exact match for ${best_ratios[0].x}:${best_ratios[0].y}`)
+  } else {
+    output.push(`Got a ${((1-best_ratios[0].error)*100)}% match for ${best_ratios[0].x}:${best_ratios[0].y}`)
+  }
+  document.querySelector("#alert").innerHTML = output.join('<br>')
 }
 
 document.querySelector("#finger").addEventListener('click', updateRatioView )
