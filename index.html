@@ -87,6 +87,32 @@ const createAccuracyRanking = (max_ratio = 32) => {
   return ranked_list;
 }
 
+const COMMON_RATIOS = [
+  { value:     4/3,    name: "4:3 - Standard \"Fullscreen\" format"},
+  { value:    16/9,    name: "16:9 - Standard \"Widescreen\" format"},
+  { value:    21/9,    name: "21:9 - Commonly advertised \"Ultrawide\" aspect ratio for Computer monitors"},
+  { value:    32/9,    name: "32:9 - Commonly advertised \"Super\"-\"Ultrawide\" aspect ratio for Computer monitors"},
+  { value:    48/9,    name: "Triple 16:9 monitor setup, sometimes branded as \"AMD Eyefinity\" or \"Nvidia Surround\""},
+  { value:  2.39/1,    name: "2.39 - \"Cinescope\" aspect ratio, common in film"},
+  { value:  2.35/1,    name: "2.35 - \"Scope\" format, often misstakenly confused for 2.39 Cinescope"},
+  { value: 1.375/1,    name: "1.375 - Academy Ratio"},
+  { value:  3440/1440, name: "Common 1440p \"21:9\" Ultrawide (3440x1440)"},
+  { value:  2560/1080, name: "Common 1080p \"21:9\" Ultrawide (2560x1080)"},
+]
+
+const rankRatioList = (ratio_list) => {
+  const x_in = parseInt(document.querySelector("#src-x").value)
+  const y_in = parseInt(document.querySelector("#src-y").value)
+  const ratio_inraw = x_in / y_in
+  if (ratio_inraw === NaN ) { return }
+
+  ratio_list.forEach(ratio => {
+    ratio.error = Math.abs(ratio_inraw - ratio.value)
+  });
+  ratio_list.sort((a, b) => { return a.error - b.error }) // Sort list based on error value: low to high
+  return ratio_list;
+}
+
 // Render the top "ratio_count" ratios on the RatioGrid DOM element
 const visualizeAccuracyRanking = (ranked_list, grid_element, ratio_count = 16, filter_repetition = true) => {
 
@@ -124,6 +150,8 @@ document.body.appendChild(ratio_grid)
 
 const updateRatioView = () => {
   const best_ratios = createAccuracyRanking(32)
+  const common_ratio_ratings = rankRatioList(COMMON_RATIOS)
+  console.log(common_ratio_ratings[0])
   // Visual Output
   visualizeAccuracyRanking(best_ratios, ratio_grid, 16)
 
