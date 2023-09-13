@@ -83,7 +83,7 @@ const createAccuracyRanking = (max_ratio = 32) => {
   }
   
   ranked_list.sort((a, b) => { return a.error - b.error }) // Sort list based on error value: low to high
-  console.log(ranked_list) // Debug, very useful though, so leave this here for the forseeable future
+  // console.log(ranked_list) // Debug, very useful though, so leave this here for the forseeable future
   return ranked_list;
 }
 
@@ -124,13 +124,10 @@ const visualizeAccuracyRanking = (ranked_list, grid_element, ratio_count = 16, f
     // TODO: Filter out potential edgecases, such as 18:9 being more commonly desired than 2:1
     if(filter_repetition && i>=1) {
       if (ranked_list[i].error == ranked_list[i-1].error) {
-        console.log(`Skipping iteration: ${i}`)
         continue
       }
     }
-    console.log(`Doing iteration: ${i}`)
     const ratio_element = grid_element.querySelectorAll('.ratio')[ranked_list[i].i];
-    console.log(ratio_element) 
     ratio_element.style.background = `rgb(${((i/ratio_count))*255}, ${(1-(i/ratio_count))*255}, 0)`;
     // 1-(i/ratio_count) 1 -> 0
   }
@@ -151,7 +148,6 @@ document.body.appendChild(ratio_grid)
 const updateRatioView = () => {
   const best_ratios = createAccuracyRanking(32)
   const common_ratio_ratings = rankRatioList(COMMON_RATIOS)
-  console.log(common_ratio_ratings[0])
   // Visual Output
   visualizeAccuracyRanking(best_ratios, ratio_grid, 16)
 
